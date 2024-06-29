@@ -1,4 +1,6 @@
-const Navbar = () => {
+import { FaC, FaCircleUser } from "react-icons/fa6";
+
+const Navbar = ({ name }) => {
   return (
     <div className="h-[109px] bg-white">
       <div className="mx-20">
@@ -6,9 +8,11 @@ const Navbar = () => {
           <div>
             <img src="/iture.png" className="h-[50px]" />
           </div>
-          <div className="flex space-x-5 text-black">
-            <div>Profile Name</div>
-            <div>Profile Image</div>
+          <div className="flex items-center space-x-5 text-black">
+            <div>{name}</div>
+            <div className="text-3xl text-primary">
+              <FaCircleUser />
+            </div>
           </div>
         </div>
       </div>
