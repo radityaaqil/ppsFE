@@ -65,7 +65,7 @@ export default function Home() {
       <div className="pt-40">
         <div className="flex justify-center">
           <form onSubmit={formik.handleSubmit}>
-            <div className="w-[573px] h-[515px] bg-white bg-opacity-15 rounded-3xl">
+            <div className="w-[573px] h-[580px] bg-white bg-opacity-15 rounded-3xl">
               <div className="pt-10 flex justify-center">
                 <img src="./iture.png" className="w-[167px] h-[72px]" />
               </div>

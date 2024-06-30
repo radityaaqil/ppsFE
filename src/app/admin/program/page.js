@@ -27,6 +27,7 @@ import * as Yup from "yup";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
 
 const Program = () => {
   const [data, setData] = useState();
@@ -34,6 +35,7 @@ const Program = () => {
   const [search, setSearch] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const token = Cookies.get("token");
+  let router = useRouter();
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -46,18 +48,28 @@ const Program = () => {
   };
 
   const FetchData = async () => {
-    let res = await axios.get(
-      `http://localhost:8080/admin/program?keyword=${search}`,
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
+    try {
+      let res = await axios.get(
+        `http://localhost:8080/admin/program?keyword=${search}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setData(res.data.data);
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.message == "Unauthorized") {
+        router.push("/");
       }
-    );
-    setData(res.data.data);
+    }
   };
 
   const GetUsername = () => {
+    if (typeof token !== "string") {
+      return router.push("/");
+    }
     const decodedToken = jwtDecode(token);
     setUsername(decodedToken.name);
   };
@@ -118,8 +130,8 @@ const Program = () => {
   });
 
   useEffect(() => {
-    GetUsername();
     FetchData();
+    GetUsername();
   }, []);
 
   return (

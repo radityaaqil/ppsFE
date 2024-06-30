@@ -23,12 +23,14 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const ProgramDetail = ({ params }) => {
   const [data, setData] = useState({});
   const [username, setUsername] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const token = Cookies.get("token");
+  let router = useRouter();
 
   const Status = (status) => {
     if (status == "ON_PROGRESS") {
@@ -53,15 +55,25 @@ const ProgramDetail = ({ params }) => {
   };
 
   const GetData = async (id) => {
-    let res = await axios.get(`http://localhost:8080/admin/program/${id}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
-    setData(res.data.data);
+    try {
+      let res = await axios.get(`http://localhost:8080/admin/program/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      setData(res.data.data);
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.message == "Unauthorized") {
+        router.push("/");
+      }
+    }
   };
 
   const GetUsername = () => {
+    if (typeof token !== "string") {
+      return router.push("/");
+    }
     const decodedToken = jwtDecode(token);
     setUsername(decodedToken.name);
   };
@@ -89,8 +101,8 @@ const ProgramDetail = ({ params }) => {
   }
 
   useEffect(() => {
-    GetUsername();
     GetData(params.id);
+    GetUsername();
   }, []);
 
   const formik = useFormik({
